@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Mouse Dash - Cartoon Chase Runner</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ GAME WRAPPER ============ -->
+  <div id="game-wrapper">
+
+    <!-- ---------- Sky / scrolling background layers ---------- -->
+    <div id="sky"></div>
+    <div id="clouds">
+      <div class="cloud cloud1"></div>
+      <div class="cloud cloud2"></div>
+      <div class="cloud cloud3"></div>
+    </div>
+    <div id="bg-hills"></div>
+
+    <!-- ---------- HUD (score / pause) ---------- -->
+    <div id="hud">
+      <div id="score-box">Score: <span id="score">0</span></div>
+      <div id="highscore-box">Best: <span id="highscore">0</span></div>
+      <button id="pause-btn" aria-label="Pause">⏸</button>
+    </div>
+
+    <!-- ---------- Main play area ---------- -->
+    <div id="game-area">
+
+      <!-- Cat chasing behind the mouse -->
+      <div id="cat">
+        <div class="cat-tail"></div>
+        <div class="cat-body">
+          <div class="cat-ear cat-ear-left"></div>
+          <div class="cat-ear cat-ear-right"></div>
+          <div class="cat-face">
+            <div class="cat-eye cat-eye-left"><div class="pupil"></div></div>
+            <div class="cat-eye cat-eye-right"><div class="pupil"></div></div>
+            <div class="cat-nose"></div>
+            <div class="cat-whiskers left"></div>
+            <div class="cat-whiskers right"></div>
+          </div>
+        </div>
+        <div class="cat-leg leg1"></div>
+        <div class="cat-leg leg2"></div>
+      </div>
+
+      <!-- Player mouse -->
+      <div id="mouse">
+        <div class="mouse-tail"></div>
+        <div class="mouse-body">
+          <div class="mouse-ear mouse-ear-left"></div>
+          <div class="mouse-ear mouse-ear-right"></div>
+          <div class="mouse-face">
+            <div class="mouse-eye mouse-eye-left"><div class="pupil"></div></div>
+            <div class="mouse-eye mouse-eye-right"><div class="pupil"></div></div>
+            <div class="mouse-nose"></div>
+          </div>
+        </div>
+        <div class="mouse-leg mleg1"></div>
+        <div class="mouse-leg mleg2"></div>
+      </div>
+
+      <!-- Obstacles get injected here by JS -->
+      <div id="obstacles"></div>
+
+      <!-- Scrolling ground -->
+      <div id="ground"></div>
+    </div>
+
+    <!-- ---------- START SCREEN ---------- -->
+    <div id="start-screen" class="overlay">
+      <h1 class="title">🐭 Mouse Dash 🐱</h1>
+      <p class="subtitle">Run! Jump! Don't let the cat catch you!</p>
+      <button id="play-btn" class="big-btn">▶ Play</button>
+      <p class="instructions">
+        Press <strong>SPACE</strong> or <strong>TAP</strong> the screen to jump
+      </p>
+    </div>
+
+    <!-- ---------- PAUSE SCREEN ---------- -->
+    <div id="pause-screen" class="overlay hidden">
+      <h2 class="title small">Paused</h2>
+      <button id="resume-btn" class="big-btn">▶ Resume</button>
+    </div>
+
+    <!-- ---------- GAME OVER SCREEN ---------- -->
+    <div id="gameover-screen" class="overlay hidden">
+      <h2 class="title small">Gotcha! 😼</h2>
+      <p id="final-score">Score: 0</p>
+      <p id="final-highscore">Best: 0</p>
+      <button id="restart-btn" class="big-btn">🔄 Restart</button>
+    </div>
+
+    <!-- Invisible full-area tap zone for mobile jump -->
+    <div id="tap-zone"></div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

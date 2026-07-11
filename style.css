@@ -1,0 +1,537 @@
+/* =========================================================
+   MOUSE DASH — Cartoon Chase Runner
+   Simple, beginner-friendly, well-commented CSS
+   ========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+  background: #222;
+}
+
+/* ---------------------------------------------------------
+   GAME WRAPPER — the whole visible game window
+   --------------------------------------------------------- */
+#game-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------
+   BACKGROUND LAYERS
+   --------------------------------------------------------- */
+#sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #7ec8f2 0%, #b9e6ff 55%, #cdf5d8 100%);
+}
+
+#clouds { position: absolute; inset: 0; pointer-events: none; }
+
+.cloud {
+  position: absolute;
+  background: #fff;
+  border-radius: 50px;
+  opacity: 0.9;
+  box-shadow: 0 8px 0 rgba(0,0,0,0.03);
+}
+.cloud::before, .cloud::after {
+  content: "";
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+.cloud1 { width: 90px; height: 34px; top: 8%; left: -20%; animation: driftCloud 18s linear infinite; }
+.cloud1::before { width: 46px; height: 46px; top: -22px; left: 10px; }
+.cloud1::after  { width: 34px; height: 34px; top: -14px; left: 50px; }
+
+.cloud2 { width: 60px; height: 26px; top: 18%; left: -30%; animation: driftCloud 24s linear infinite 3s; }
+.cloud2::before { width: 32px; height: 32px; top: -16px; left: 6px; }
+.cloud2::after  { width: 24px; height: 24px; top: -10px; left: 32px; }
+
+.cloud3 { width: 110px; height: 40px; top: 4%; left: -40%; animation: driftCloud 30s linear infinite 6s; }
+.cloud3::before { width: 54px; height: 54px; top: -26px; left: 14px; }
+.cloud3::after  { width: 40px; height: 40px; top: -16px; left: 60px; }
+
+@keyframes driftCloud {
+  from { transform: translateX(0); }
+  to   { transform: translateX(140vw); }
+}
+
+#bg-hills {
+  position: absolute;
+  bottom: 90px;
+  left: 0;
+  width: 200%;
+  height: 90px;
+  background:
+    radial-gradient(circle at 10% 100%, #8fd97a 0 60px, transparent 61px),
+    radial-gradient(circle at 30% 100%, #7bcf63 0 80px, transparent 81px),
+    radial-gradient(circle at 55% 100%, #8fd97a 0 55px, transparent 56px),
+    radial-gradient(circle at 75% 100%, #7bcf63 0 75px, transparent 76px),
+    radial-gradient(circle at 95% 100%, #8fd97a 0 60px, transparent 61px);
+  background-color: transparent;
+  animation: scrollHills 12s linear infinite;
+}
+@keyframes scrollHills {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ---------------------------------------------------------
+   HUD
+   --------------------------------------------------------- */
+#hud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  z-index: 30;
+  font-weight: bold;
+  color: #4a3320;
+}
+#score-box, #highscore-box {
+  background: rgba(255,255,255,0.85);
+  padding: 6px 14px;
+  border-radius: 20px;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.15);
+  font-size: 16px;
+}
+#pause-btn {
+  background: #ffd166;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  box-shadow: 0 3px 0 #d99c25;
+  cursor: pointer;
+}
+#pause-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #d99c25; }
+
+/* ---------------------------------------------------------
+   GAME AREA
+   --------------------------------------------------------- */
+#game-area {
+  position: absolute;
+  inset: 0;
+}
+
+#ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 80px;
+  background: repeating-linear-gradient(
+    90deg,
+    #c98a4b 0 40px,
+    #b97b3d 40px 80px
+  );
+  border-top: 6px solid #8a5a2a;
+  animation: scrollGround 0.8s linear infinite;
+}
+@keyframes scrollGround {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-80px); }
+}
+
+/* =========================================================
+   MOUSE CHARACTER (player)
+   ========================================================= */
+#mouse {
+  position: absolute;
+  left: 15%;
+  bottom: 80px; /* sits on ground; JS animates this for jump */
+  width: 70px;
+  height: 60px;
+  z-index: 20;
+  transition: transform 0.1s linear;
+}
+
+.mouse-body {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 46px;
+  height: 34px;
+  background: radial-gradient(circle at 35% 30%, #b5804a, #8a5a2e 80%);
+  border-radius: 60% 60% 50% 50%;
+  box-shadow: inset -4px -4px 0 rgba(0,0,0,0.1);
+}
+
+.mouse-ear {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: radial-gradient(circle at 35% 30%, #c68f57, #8a5a2e 85%);
+  border-radius: 50%;
+  top: -10px;
+}
+.mouse-ear-left { left: 8px; }
+.mouse-ear-right { left: 26px; }
+
+.mouse-face {
+  position: absolute;
+  top: 4px;
+  right: -6px;
+}
+.mouse-eye {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: #fff;
+  border-radius: 50%;
+  top: -2px;
+}
+.mouse-eye-left { left: -4px; }
+.mouse-eye-right { left: 8px; }
+.mouse-eye .pupil {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #222;
+  border-radius: 50%;
+  top: 2px;
+  left: 3px;
+}
+.mouse-nose {
+  position: absolute;
+  width: 6px;
+  height: 5px;
+  background: #ff8fa3;
+  border-radius: 50%;
+  top: 6px;
+  left: 20px;
+}
+
+.mouse-tail {
+  position: absolute;
+  bottom: 10px;
+  left: -14px;
+  width: 26px;
+  height: 6px;
+  background: #a06c3a;
+  border-radius: 10px;
+  transform: rotate(15deg);
+  transform-origin: right center;
+  animation: tailWag 0.4s ease-in-out infinite alternate;
+}
+@keyframes tailWag {
+  from { transform: rotate(10deg); }
+  to   { transform: rotate(-10deg); }
+}
+
+.mouse-leg {
+  position: absolute;
+  bottom: -4px;
+  width: 8px;
+  height: 14px;
+  background: #6e4423;
+  border-radius: 4px;
+  animation: mouseRun 0.3s linear infinite;
+}
+.mleg1 { left: 16px; }
+.mleg2 { left: 34px; animation-delay: 0.15s; }
+@keyframes mouseRun {
+  0%, 100% { transform: rotate(25deg); }
+  50%      { transform: rotate(-25deg); }
+}
+
+/* Jumping: stop the run-cycle wiggle */
+#mouse.jumping .mouse-leg { animation-play-state: paused; transform: rotate(10deg); }
+#mouse.jumping .mouse-tail { animation-play-state: paused; }
+
+/* Falling / caught animation */
+#mouse.falling {
+  animation: mouseFall 0.6s ease-in forwards;
+}
+@keyframes mouseFall {
+  0%   { transform: rotate(0deg) translateY(0); }
+  40%  { transform: rotate(35deg) translateY(4px); }
+  100% { transform: rotate(95deg) translateY(10px); }
+}
+
+/* =========================================================
+   CAT CHARACTER (chaser)
+   ========================================================= */
+#cat {
+  position: absolute;
+  left: 3%;
+  bottom: 80px;
+  width: 90px;
+  height: 74px;
+  z-index: 15;
+  transition: left 0.5s ease-in, transform 0.1s linear;
+}
+
+.cat-body {
+  position: absolute;
+  bottom: 0;
+  left: 14px;
+  width: 58px;
+  height: 42px;
+  background: radial-gradient(circle at 35% 30%, #b3b8c2, #767c88 85%);
+  border-radius: 55% 55% 45% 45%;
+  box-shadow: inset -5px -5px 0 rgba(0,0,0,0.12);
+}
+
+.cat-ear {
+  position: absolute;
+  width: 0; height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 20px solid #767c88;
+  top: -14px;
+}
+.cat-ear-left  { left: 10px; transform: rotate(-15deg); }
+.cat-ear-right { left: 34px; transform: rotate(15deg); }
+
+.cat-face { position: absolute; top: 4px; right: -4px; }
+.cat-eye {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  background: #fff;
+  border-radius: 50%;
+  top: -2px;
+}
+.cat-eye-left { left: -6px; }
+.cat-eye-right { left: 10px; }
+.cat-eye .pupil {
+  position: absolute;
+  width: 5px;
+  height: 7px;
+  background: #2a2a2a;
+  border-radius: 50%;
+  top: 2px;
+  left: 3px;
+}
+.cat-nose {
+  position: absolute;
+  width: 6px;
+  height: 5px;
+  background: #ff8fa3;
+  border-radius: 50%;
+  top: 10px;
+  left: 24px;
+}
+.cat-whiskers {
+  position: absolute;
+  top: 12px;
+  width: 16px;
+  height: 2px;
+  background: rgba(255,255,255,0.8);
+}
+.cat-whiskers.left  { left: -20px; }
+.cat-whiskers.right { left: 30px; }
+
+.cat-tail {
+  position: absolute;
+  bottom: 14px;
+  left: -6px;
+  width: 34px;
+  height: 8px;
+  background: #767c88;
+  border-radius: 10px;
+  transform: rotate(-20deg);
+  transform-origin: right center;
+  animation: catTailSwing 0.5s ease-in-out infinite alternate;
+}
+@keyframes catTailSwing {
+  from { transform: rotate(-30deg); }
+  to   { transform: rotate(5deg); }
+}
+
+.cat-leg {
+  position: absolute;
+  bottom: -4px;
+  width: 10px;
+  height: 16px;
+  background: #5f6470;
+  border-radius: 4px;
+  animation: catRun 0.28s linear infinite;
+}
+.leg1 { left: 22px; }
+.leg2 { left: 48px; animation-delay: 0.14s; }
+@keyframes catRun {
+  0%, 100% { transform: rotate(22deg); }
+  50%      { transform: rotate(-22deg); }
+}
+
+/* Cat sprint animation used during the "catch" sequence */
+#cat.chasing-fast .cat-leg { animation-duration: 0.12s; }
+#cat.chasing-fast .cat-tail { animation-duration: 0.2s; }
+
+/* =========================================================
+   OBSTACLES
+   ========================================================= */
+#obstacles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.obstacle {
+  position: absolute;
+  bottom: 80px;
+}
+
+.obstacle.box {
+  width: 34px; height: 34px;
+  background: linear-gradient(145deg, #e0a45a, #b6742c);
+  border: 3px solid #8a5620;
+  border-radius: 4px;
+}
+.obstacle.box::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 2px dashed rgba(255,255,255,0.5);
+}
+
+.obstacle.block {
+  width: 26px; height: 46px;
+  background: linear-gradient(145deg, #ff8fa3, #e0526f);
+  border: 3px solid #b6314c;
+  border-radius: 5px;
+}
+
+.obstacle.chair {
+  width: 32px; height: 50px;
+}
+.obstacle.chair::before {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 32px; height: 22px;
+  background: linear-gradient(145deg, #8bd3e6, #4ea6bd);
+  border: 3px solid #2f7f92;
+  border-radius: 4px;
+}
+.obstacle.chair::after {
+  content: "";
+  position: absolute;
+  bottom: 18px; left: 0;
+  width: 32px; height: 32px;
+  background: linear-gradient(145deg, #8bd3e6, #4ea6bd);
+  border: 3px solid #2f7f92;
+  border-radius: 4px 4px 0 0;
+}
+
+.obstacle.table {
+  width: 54px; height: 40px;
+}
+.obstacle.table::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 54px; height: 14px;
+  background: linear-gradient(145deg, #c9a06a, #9a6f3c);
+  border: 3px solid #6f4d24;
+  border-radius: 4px;
+}
+.obstacle.table::after {
+  content: "";
+  position: absolute;
+  top: 12px; left: 6px;
+  width: 8px; height: 28px;
+  background: #9a6f3c;
+  box-shadow: 32px 0 0 #9a6f3c;
+}
+
+/* =========================================================
+   OVERLAYS (start / pause / game over)
+   ========================================================= */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(20, 30, 40, 0.55);
+  text-align: center;
+  padding: 20px;
+}
+.overlay.hidden { display: none; }
+
+.title {
+  font-size: clamp(28px, 8vw, 48px);
+  color: #fff;
+  text-shadow: 3px 3px 0 #d9534f, -1px -1px 0 #333;
+  letter-spacing: 1px;
+}
+.title.small { font-size: clamp(24px, 6vw, 36px); }
+
+.subtitle {
+  color: #ffe9c7;
+  font-size: clamp(14px, 3vw, 18px);
+  font-weight: bold;
+}
+
+.instructions {
+  color: #fff;
+  font-size: 13px;
+  opacity: 0.9;
+  margin-top: 6px;
+}
+
+.big-btn {
+  background: linear-gradient(180deg, #6ee06e, #3fae3f);
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 14px 34px;
+  border-radius: 30px;
+  box-shadow: 0 5px 0 #2c7d2c;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.big-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #2c7d2c;
+}
+
+#final-score, #final-highscore {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Full-screen invisible tap layer for mobile jump input */
+#tap-zone {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE TWEAKS
+   --------------------------------------------------------- */
+@media (max-width: 600px) {
+  #score-box, #highscore-box { font-size: 13px; padding: 5px 10px; }
+  #mouse { left: 12%; }
+  #cat { left: 1%; }
+}
+
+@media (max-height: 420px) {
+  .title { font-size: 26px; }
+  .big-btn { padding: 10px 24px; font-size: 16px; }
+}
